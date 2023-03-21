@@ -1,6 +1,6 @@
 ---
-title: "Untitled"
-author: "Jeremiah Katumo Kurwa"
+title: "KQ stock time series"
+author: "Jeremy"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -9,11 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-NAME: JEREMIAH KATUMO KURWA
-REG NO: TU01-SS213-0324/2018
-COURSE: BSC STATISTICS 4.2
-UNIT: FINANCIAL TIME SERIES
-YEAR: 2022/2023
+
 
 Load the required packages.
 
