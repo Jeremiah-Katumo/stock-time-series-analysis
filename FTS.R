@@ -1,3 +1,5 @@
+# Install and load the necessary packages
+
 library(DT)
 library(readxl)
 library(tidyverse)
@@ -15,7 +17,7 @@ my.install <- function(pkg, ...){
 
 purrr::walk(packages, my.install, character.only = TRUE, warn.conflicts = FALSE)
 
-# Import the dataset subsetted as KQ.
+# Import the dataset filtered as ISSUER=="KQ"
 
 
 data <- read_excel("C:/Users/jerem/Downloads/Daily Average Prices2010-2013....xls")
@@ -42,19 +44,16 @@ p1
 
 # Kolmogorov Smirnov Test
 
-
-# Kolmogorov-Smirnov Test
 ks.test(data$`AVG PRICE`, "pnorm")
 
 # Jarque Bera Test
 
-
-# Jarque Bera Test
 jarque.bera.test(data$`AVG PRICE`)
-# The data is normally distributed as the p-value is less than 0.05
+# ... The data is normally distributed as the p-value is less than 0.05
+
+
 
 # Time Series Decomposition
-
 
 # Create time series
 inds <- seq(as.Date("2010-01-04"), as.Date("2010-12-31"), by = "month")
@@ -69,17 +68,15 @@ msts( as.numeric(data$`AVG PRICE`),
 
 # Dickey-Fuller Test for Stationarity.
 
-
-# Stationarity using Dickey-Fuller test
 adf.test(data$`AVG PRICE`, alternative = "stationary", k = 0)
 
 # Convert the AVG PRICE variable of data to ts data.
 
-
 tsdata <- SMA(data$`AVG PRICE`, n=5)
 
-# Selecting a candidate arima model and Autocorrelation plot
 
+
+# Selecting a candidate arima model and Autocorrelation plot
 
 tsdata_diff <- diff(tsdata, differences=1) # Differencing the tsdata
 acf(na.omit(tsdata_diff), lag.max = 30)
@@ -88,9 +85,9 @@ acf(na.omit(tsdata_diff), lag.max = 30)
 
 pacf(na.omit(tsdata_diff), lag.max = 30)
 
+
+
 # Creating an ARIMA(2,1,2) model
-
-
 # ARMIA model
 arima_model <- arima(log(tsdata), order=c(2,1,2))## seasonal = list(order = c(2,1,2), period = 12))
 arima_model
@@ -105,19 +102,14 @@ autoplot(ts_forecast) + theme_bw()
 
 # The p-value of the ljung box text is 2.2e-16 less than 0.05 indicating there is non-zero autocorrelations in lags 1-30
 
-
 Box.test(arima_mdl$residuals, lag = 30, type = "Ljung-Box")
 
 
 # Plot the Residuals of arima_mdl model.
 
-
 autoplot(arima_mdl$residuals)
 
-
 # Plot a histogram of the arima model (arima_mdl) residuals.
-
-
 
 plotForecastErrors <- function(forecasterrors){
   # make a histogram of the forecast errors:
@@ -140,17 +132,15 @@ plotForecastErrors <- function(forecasterrors){
   # plot the normal curve as a blue line on top of the histogram of forecast errors:
   points(myhist$mids, myhist$density, type="l", col="blue", lwd=2)
 }
-
-
 plotForecastErrors(arima_mdl$residuals)
 
+# Use ggplot2 to plot the residuals of the arima model
 
 ggplot(data.frame(residuals = arima_mdl$residuals), aes(residuals)) + 
   geom_histogram(bins = 50, aes(y = ..density..), col = "red", fill = "red", alpha = 0.3) + 
   geom_density()# make a histogram
 
-The forecast errors have a negative mean rather than a zero mean. We can confirm this by finding the mean of residuals.
-
+# The forecast errors have a negative mean rather than a zero mean. We can confirm this by finding the mean of residuals.
 
 mean(arima_mdl$residuals)
 
